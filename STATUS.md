@@ -83,7 +83,9 @@ friendly font comfort toggles, ID↔EN (Alih), read-aloud action, personal-text 
 2. **Otari account/key**: registrant credit info arrives on registration. Once he has it, the
    key goes into the site's Settings (BYOK-style, stays in his browser) or a publisher default
    can be configured — until then the site demos fully in mock mode. **Nothing was paid for;
-   no signup was attempted by the agent.**
+   no signup was attempted by the agent.** *(Resolved in stage 2: the owner registered,
+   delivered a working key via `.otari-key.txt`, and the publisher default is live — see
+   the M2 addendum at the end of this file.)*
 3. **Demo video (<2 min, he narrates himself, not AI-generated)** — stage 4, his step.
 
 ### Not started (by design — later stages)
@@ -101,14 +103,14 @@ add a key in ⚙ AI model settings for live inference). Tests: `node --test "tes
 **https://bacajelas-caller.web.app** · repo **https://github.com/arizkis/bacajelas-agentic**
 (PUBLIC, Apache-2.0) · community PR **https://github.com/cognizant-ai-labs/agentic-web/pull/68**.
 
-### M2 (Otari default router) — PARKED, owner's key does not authenticate
-Retested once under the owner's re-authorization ("aman udah", 2026-11-22): keyed call to
-`https://api.otari.ai/api/v1/chat/completions` → **HTTP 401 `{"detail":"Invalid API key"}`**
-(same as the first probe). Per instructions: parked, no retries, no workarounds. The key
-stays in `.otari-key.txt` (mode 600, `.gitignore`d — verified absent from the repo tree and
-from the staged commit). Default path remains **BYOK + clearly-labelled mock**, and the
-manifest's `llm_router.note` now says exactly that, honestly. If the owner later supplies a
-working key, M2 is a small wiring job (RouterClient already supports it).
+### M2 (Otari default router) — ✅ DONE 2026-11-22 (see the M2 addendum at the end)
+Originally parked in the first stage-2 pass: the first two keys the owner delivered
+returned **HTTP 401 `{"detail":"Invalid API key"}`**. The owner then delivered a third
+key and the parent verified it personally — a keyed call to
+`https://api.otari.ai/api/v1/chat/completions` (model `alibaba/qwen3.8-flash`) returned
+a real completion. That verification call is also the request that fired the owner's
+Otari dashboard **first-request onboarding**. M2 was then wired in full — pattern,
+evidence and residual risk are recorded in the addendum at the end of this file.
 
 ### What shipped
 - **loadPeer wiring completed** (`site/runtime/runtime.js`): accepts a network-definition
@@ -160,4 +162,69 @@ working key, M2 is a small wiring job (RouterClient already supports it).
 ### Still owed (later stages)
 M8 video + Devpost submission package (owner narrates, <2 min) · full spec 0.2↔0.3 line
 diff in the final week · backlog tiers B–E from WIN-PLAN §6 (second peer = Citation Mirror
-spot check is the highest-value next item) · M2 if a working Otari key ever arrives.
+spot check is the highest-value next item).
+
+## Stage 2 addendum — M2 completed 2026-11-22 (live publisher default)
+
+**The §6 checklist is now fully green**, including its last 🟡: "load and run in a
+browser with the site's published default router" — the default is live Otari, no
+visitor key needed.
+
+### The pattern (spec §4, read before wiring)
+Spec §4 ("Tenet Three: Pluggable Inference") sanctions three shapes for default
+inference: a publisher-funded router/model, browser authentication through the
+publisher's own session, or routing to infrastructure the publisher controls — and
+its safest shape is a **publisher-controlled default-inference endpoint** holding
+credentials server-side. That endpoint needs a backend; this deployment is static
+Firebase Hosting on the Spark plan (nothing paid, no functions), so the safer route
+is not available today. The reference skill adds its own hard rule: *"Do not put
+keys, tokens or personal data in any published file"* — read together with §4's
+credential rule (a **visitor's** BYOK key must never appear in manifests, traces or
+peer requests; ours never does), the wiring chosen is the deploy-time split:
+
+- The repository's `site/publisher-config.js` is a committed **null placeholder** —
+  no credential in git, ever (leak scan after deploy: the key exists in exactly two
+  files on disk, `.otari-key.txt` and the gitignored staging copy).
+- `scripts/deploy.mjs` copies `site/` + `caller/` into the gitignored `.deploy/`
+  staging folder, generates the deployed `publisher-config.js` there from
+  `.otari-key.txt` (base URL + model taken from the manifest, so there is one source
+  of truth), refuses to stage if `git check-ignore` does not cover the staging path,
+  and deploys the staging folder. The key is never printed by any script.
+- `site/app.js` mode order: **visitor BYOK key → publisher default → labelled demo
+  mock**; an explicit demo-mode choice in Settings overrides both live paths;
+  "Forget my key" now falls back to the publisher default instead of stranding the
+  visitor. Mode pill, result attribution and the settings drawer copy all state
+  which mode is active, honestly.
+- The caller porch is unchanged by design: a caller inherits the *caller's* router
+  (spec §4 router-only disclosure), so our publisher key is never used — or shipped —
+  on the caller origin; the porch still runs on its demo model.
+
+**Residual risk, on the record:** a static bundle cannot keep a secret from its own
+visitors — the deployed config is world-readable, so the key can be extracted and
+the owner's Otari credit spent by a stranger. Mitigations: the credit is bounded
+(registrant grant), the key is revocable/rotatable from the Otari dashboard in one
+click, it exists in no git history and no log, and the moment this project gains any
+backend (Blaze upgrade or a free worker tier) the key moves behind a same-origin
+default-inference endpoint per §4 and `publisher-config.js` returns to null.
+
+### Evidence (2026-11-22, after wiring)
+- **Local e2e** (`node scripts/verify-live.mjs`, local artifacts + `.otari-key.txt`):
+  events `run-start → agent-thinking(rani) → routing rani→sari → agent-thinking(sari)
+  → agent-done ×2 → run-done`; 2 invocations, 26.0 s; Sari's live answer preserved
+  every fact of the sample scholarship letter (Kartini Merit Scholarship, clause
+  7(b), certified transcripts, one recommendation letter, **17:00 Fri 12 Dec 2026**
+  deadline, forfeiture) and closed with her signature plain-language explanation of
+  "certified copy".
+- **Deployed e2e** (`node scripts/verify-live.mjs --deployed`): same flow executed
+  from artifacts fetched from **https://bacajelas-agentic.web.app** with the deployed
+  runtime and the deployed generated config — routing `rani→sari`, 17.3 s, all facts
+  preserved. All artifacts HTTP 200 on both origins; `Access-Control-Allow-Origin: *`
+  confirmed on the manifest.
+- **Suite:** `node --test "tests/*.test.mjs"` — **15/15 green** after the wiring
+  (runtime.js itself untouched this round; the wiring lives in app.js + config).
+- **Atlas re-check** (fresh fetch, `checkedAt` 2026-11-22T06:38:51Z, checker profile
+  MVP 0.2): **verdict "conformant", score 100, 20 pass / 0 warn / 0 fail, trustLevel
+  "clean", linkable: true** — the verdict holds after the redeploy, and the discovery
+  file Atlas previously cached as 404 now reads 200 in its own file list.
+- **Redeploy:** both hosting sites released via `scripts/deploy.mjs` (Firebase
+  project `bacajelas`, Spark, nothing paid): bacajelas-agentic + bacajelas-caller.

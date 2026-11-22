@@ -235,8 +235,9 @@
 <div id="settings" class="drawer" hidden role="dialog" aria-label="AI model settings">
   <div class="drawer-card">
     <h3>⚙ AI model settings</h3>
-    <p class="drawer-sub">BacaJelas runs on the open agentic web: you choose the brain. Bring your own key for any
-    OpenAI-compatible router (Otari is pre-filled as a suggestion), or stay in demo mode with our local mock
+    <p class="drawer-sub">BacaJelas runs on the open agentic web: you choose the brain. Out of the box the team is
+    live on the publisher's Otari default — on the house, no key needed. Prefer your own router? Bring your own key for any
+    OpenAI-compatible router (Otari is pre-filled as a suggestion) and it replaces the default. Or stay in demo mode with our local mock
     specialists — every flow works there too, including the visit to Deadline Desk, whose board data is live either way.</p>
     <label class="field-label" for="set-base">Router base URL</label>
     <input id="set-base" type="url" placeholder="https://api.otari.ai/api/v1">
@@ -244,7 +245,7 @@
     <input id="set-model" type="text" placeholder="alibaba/qwen3.8-flash">
     <label class="field-label" for="set-key">Your API key <small>(stays in this browser, sent only to your router)</small></label>
     <input id="set-key" type="password" autocomplete="off" placeholder="sk-…">
-    <label class="switch"><input type="checkbox" id="set-mock"><span class="track"></span><span class="switch-label">Demo mode (local mock specialists, no key, no network for reading tasks)</span></label>
+    <label class="switch"><input type="checkbox" id="set-mock"><span class="track"></span><span class="switch-label">Demo mode (local mock specialists, no network for reading tasks — overrides the live default and your key)</span></label>
     <div class="modal-btns">
       <button type="button" id="settings-clear" class="ghost-btn">Forget my key</button>
       <button type="button" id="settings-save" class="primary-btn">Save</button>

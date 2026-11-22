@@ -3,6 +3,7 @@
  * the cross-site visit to Deadline Desk (M3) and the §6 trust theatre (M5). */
 import { AgentRuntime, ConsentGate, MockModel, RouterClient, validateNetwork } from './runtime/runtime.js';
 import { createSiteActions } from './site-actions.js';
+import { PUBLISHER_DEFAULT } from './publisher-config.js';
 
 const $ = (s) => document.querySelector(s);
 const NAMES = { rani: 'Rani', sari: 'Sari', alih: 'Alih', rara: 'Rara' };
@@ -26,13 +27,42 @@ function saveStats() {
   $('#stat-clarified').textContent = stats.clarified;
 }
 
+/* Inference mode (spec §4): the visitor's own key wins; otherwise the
+ * publisher default when this deployment carries one; otherwise the
+ * clearly-labelled demo model. An explicit demo-mode choice in Settings
+ * wins over both live paths. */
 function buildModel() {
-  if (settings.mock || !settings.apiKey) return MockModel;
-  return new RouterClient({
-    baseUrl: settings.baseUrl || manifest.llm_router.base_url,
-    model: settings.model || manifest.llm_router.model || 'alibaba/qwen3.8-flash',
-    apiKey: settings.apiKey,
-  });
+  if (!settings.mock && settings.apiKey) {
+    return new RouterClient({
+      baseUrl: settings.baseUrl || manifest.llm_router.base_url,
+      model: settings.model || manifest.llm_router.model || 'alibaba/qwen3.8-flash',
+      apiKey: settings.apiKey,
+    });
+  }
+  if (!settings.mock && PUBLISHER_DEFAULT) {
+    return new RouterClient({
+      baseUrl: PUBLISHER_DEFAULT.baseUrl,
+      model: PUBLISHER_DEFAULT.model,
+      apiKey: PUBLISHER_DEFAULT.apiKey,
+    });
+  }
+  return MockModel;
+}
+function liveSource() {
+  if (settings.apiKey) return 'visitor';
+  if (PUBLISHER_DEFAULT) return 'publisher';
+  return null;
+}
+function modelName() {
+  if (settings.apiKey) return settings.model || manifest.llm_router.model || 'default model';
+  if (PUBLISHER_DEFAULT) return PUBLISHER_DEFAULT.model;
+  return manifest.llm_router.model || 'default model';
+}
+function modePillText() {
+  if (modelMode === 'mock') return '✦ Demo mode — mock specialists, fully offline';
+  return liveSource() === 'visitor'
+    ? `✦ Live — ${modelName()} via your router`
+    : `✦ Live — ${modelName()} on the house (publisher default)`;
 }
 
 /* ---------------- ledger + stage ---------------- */
@@ -187,10 +217,7 @@ async function boot() {
   runtime = new AgentRuntime({ network, model: buildModel(), consentGate, actions, onEvent });
   modelMode = runtime.model === MockModel ? 'mock' : 'live';
 
-  const pill = $('#mode-pill');
-  pill.textContent = modelMode === 'mock'
-    ? '✦ Demo mode — mock specialists, fully offline'
-    : `✦ Live — ${settings.model || manifest.llm_router.model} via your router`;
+  $('#mode-pill').textContent = modePillText();
   $('#stat-peers').textContent = Object.keys(links.networks ?? {}).filter((n) => n !== 'bacajelas').length;
   $('#stat-agents').textContent = network.tools.length;
   saveStats();
@@ -255,7 +282,9 @@ async function buildGallery() {
     c.el = el;
   }
   if (modelMode !== 'mock') {
-    $('#gallery-note').textContent = 'You are in live mode, so we never spend your tokens unasked — press a card and the team runs it for real.';
+    $('#gallery-note').textContent = liveSource() === 'visitor'
+      ? 'You are in live mode, so we never spend your tokens unasked — press a card and the team runs it for real.'
+      : 'You are in live mode on the publisher default, so we never spend inference unasked — press a card and the team runs it for real.';
     cards.forEach((c) => {
       const after = c.el.querySelector('.gallery-after');
       after.innerHTML = '';
@@ -297,7 +326,7 @@ async function run(action) {
     const answer = await runtime.run(request, { slyData: personal ? { personal_text: editorText } : {} });
     $('#result').hidden = false;
     $('#result-text').textContent = answer;
-    $('#result-who').textContent = modelMode === 'mock' ? 'Demo mode — try Settings for a live model' : `Live via ${settings.model || 'default model'}`;
+    $('#result-who').textContent = modelMode === 'mock' ? 'Demo mode — try Settings for a live model' : `Live via ${modelName()}${liveSource() === 'publisher' ? ' (publisher default — on the house)' : ''}`;
     $('#receipt').textContent = personal
       ? '🔒 Receipt: you marked this personal, so it stayed right here in your browser. No peer site was contacted, and private context was shared with nobody — that is the promise, kept.'
       : '🧾 Receipt: your team worked inside this page. No third-party site was contacted, and no private context left the browser.';
@@ -332,7 +361,7 @@ async function visitPeer() {
     $('#peer-result-text').textContent = answer;
     $('#peer-result-who').textContent = modelMode === 'mock'
       ? 'Demo-mode team, live neighbour data'
-      : `Live via ${settings.model || 'default model'}, live neighbour data`;
+      : `Live via ${modelName()}, live neighbour data`;
     if (r) {
       $('#peer-receipt').textContent =
         `🧾 Visit receipt — neighbour: ${r.network} at ${r.origin} · agents who woke: ${r.agents.join(' + ')} · ` +
@@ -383,7 +412,7 @@ function openSettings() {
   $('#set-base').value = settings.baseUrl || manifest.llm_router.base_url;
   $('#set-model').value = settings.model || manifest.llm_router.model || '';
   $('#set-key').value = settings.apiKey || '';
-  $('#set-mock').checked = !!settings.mock || !settings.apiKey;
+  $('#set-mock').checked = !!settings.mock;
   $('#settings').hidden = false;
 }
 $('#settings-open').onclick = openSettings;
@@ -395,12 +424,19 @@ $('#settings-save').onclick = () => {
   saveSettings();
   runtime.model = buildModel();
   modelMode = runtime.model === MockModel ? 'mock' : 'live';
-  $('#mode-pill').textContent = modelMode === 'mock' ? '✦ Demo mode — mock specialists, fully offline' : `✦ Live — ${settings.model} via your router`;
+  $('#mode-pill').textContent = modePillText();
   $('#settings').hidden = true;
-  log('done', modelMode === 'mock' ? '⚙ Demo mode it is — everything runs locally.' : '⚙ Live model connected. Your key lives only in this browser and travels only to your router.');
+  log('done', modelMode === 'mock'
+    ? '⚙ Demo mode it is — everything runs locally.'
+    : liveSource() === 'visitor'
+      ? '⚙ Live model connected. Your key lives only in this browser and travels only to your router.'
+      : '⚙ On the house: the publisher default is live (Otari). Add your own key above any time to use your own router instead.');
 };
 $('#settings-clear').onclick = () => {
   delete settings.apiKey; saveSettings(); $('#set-key').value = '';
+  runtime.model = buildModel();
+  modelMode = runtime.model === MockModel ? 'mock' : 'live';
+  $('#mode-pill').textContent = modePillText();
   log('consent', '🧹 Key forgotten from this browser. Gone means gone.');
 };
 

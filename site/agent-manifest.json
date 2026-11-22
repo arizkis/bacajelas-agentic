@@ -59,7 +59,7 @@
   "byok_router": "https://api.otari.ai/api/v1",
   "mock": false,
   "model": "alibaba/qwen3.8-flash",
-  "note": "Inference is bring-your-own-key: visitors may point Settings at any OpenAI-compatible router (Otari is the pre-filled suggestion) and the key stays in their browser, sent only to that router — never to this site or any peer site. With no key configured, the site runs in a clearly-labelled demo mode with local mock specialists, so every flow — including the visit to Deadline Desk, whose board data is live — can be tried offline. (A publisher Otari key was tested on 2026-11-22 and did not authenticate; rather than ship a key wall that fails, the default path is honest demo mode + BYOK.)"
+  "note": "Default inference is LIVE: this site publishes a publisher-funded Otari default (model alibaba/qwen3.8-flash), so the network runs with no visitor key — the spec §6 default path. The publisher key is a bounded, revocable registrant-credit key generated into the deployed bundle at deploy time; a purely static site has no server side to hold it, and it is never committed to the public repository. Visitors may override with their own key in Settings (BYOK): that key stays in their browser, sent only to the router they chose — never to this site or any peer site. A clearly-labelled demo mode with local mock specialists remains available in Settings, and the visit to Deadline Desk returns live board data in every mode."
  },
  "networks": [
   {

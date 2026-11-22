@@ -45,10 +45,16 @@ and bring back live answers**.
 
 ## Inference
 
-Bring your own key: point Settings at any OpenAI-compatible router (Otari is
-pre-filled as a suggestion; the key stays in your browser). With no key, the
-site runs in a clearly-labelled demo mode with local mock specialists — every
-flow still works, and the Deadline Desk visit still returns live data.
+Live by default: the site publishes a publisher-funded Otari default
+(`alibaba/qwen3.8-flash`), so the team runs with no visitor key. Or bring
+your own key: point Settings at any OpenAI-compatible router (Otari is
+pre-filled as a suggestion; the key stays in your browser and overrides
+the default). Demo mode with local mock specialists is still there in
+Settings — every flow works in it too, and the Deadline Desk visit still
+returns live data. The publisher key is a bounded, revocable
+registrant-credit key generated into the deployed bundle by
+`scripts/deploy.mjs`; it is never committed to this repository (see
+`site/publisher-config.js` for the full reasoning).
 
 ## The validator (shared tooling)
 

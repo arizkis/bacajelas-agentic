@@ -9,3 +9,7 @@ node_modules/
 .firebase/
 firebase-debug.log
 .DS_Store
+
+# Deploy staging — the generated publisher-config.js inside it carries
+# the live Otari key. NEVER commit anything under .deploy/.
+.deploy/
