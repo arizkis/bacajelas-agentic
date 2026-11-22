@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BacaJelas — Read clearly. Privately. Together with friendly agents.</title>
+<meta name="description" content="A reading companion on the open agentic web. Rani and her specialist friends simplify, translate and summarise — right in your browser. And with your permission, they visit neighbours like Deadline Desk and bring back live answers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Sora:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">B</div>
+    <div>
+      <strong>BacaJelas</strong>
+      <span>Read clearly. Privately.</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="mode-pill" class="pill pill-warm">Warming up…</span>
+    <button id="theme-toggle" class="ghost-btn" type="button" aria-label="Toggle dark mode">🌙</button>
+    <button id="settings-open" class="ghost-btn" type="button">⚙ AI model settings</button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO / GREETING -->
+  <section class="hero card">
+    <div class="avatar-stage" aria-hidden="true">
+      <div class="avatar avatar-rani"><span>👩🏽‍🏫</span><i class="pulse"></i></div>
+    </div>
+    <div class="hero-text">
+      <h1>Halo! I'm <span class="grad">Rani</span> — and reading just got friendlier.</h1>
+      <p id="greeting" class="greeting"></p>
+      <p class="hero-sub">Bring me any text that's hard to read — a letter, an article, a contract clause.
+      My friends and I will make it clear, right here in your browser. Nothing you mark
+      <em>personal</em> ever leaves this page. That's a promise we keep out loud, every time.
+      And when a neighbour site can help — like <strong>Deadline Desk</strong>, which tracks open
+      prize calls — I'll ask your permission, pop over, and bring the answer back with a receipt.</p>
+      <div class="chips" id="sample-chips"></div>
+      <div class="stats-strip" aria-label="This page, by the numbers">
+        <div class="stat"><strong id="stat-agents">4</strong><span>agents on this page</span></div>
+        <div class="stat"><strong id="stat-peers">…</strong><span>neighbours we can visit</span></div>
+        <div class="stat"><strong id="stat-clarified">0</strong><span>texts clarified on this device</span></div>
+        <div class="stat"><strong id="stat-checks">0 / 5</strong><span>safety checks passed (below)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENT STAGE -->
+  <section class="stage card" aria-label="Your agent team">
+    <div class="stage-head">
+      <h2>Your reading team</h2>
+      <span class="live-dot"><i></i> live</span>
+    </div>
+    <div class="agents" id="agents">
+      <article class="agent" data-agent="rani" data-state="idle">
+        <div class="agent-face">👩🏽‍🏫</div>
+        <h3>Rani</h3><p class="agent-role">Front agent · your host</p>
+        <p class="agent-say">"Tell me what you're reading — I'll bring the right friend. Or, with your say-so, a neighbour."</p>
+        <span class="agent-status">Resting</span>
+      </article>
+      <article class="agent" data-agent="sari" data-state="idle">
+        <div class="agent-face">🌸</div>
+        <h3>Sari</h3><p class="agent-role">Simplifier</p>
+        <p class="agent-say">"Hard words? I'll make them kind, without losing a single fact."</p>
+        <span class="agent-status">Resting</span>
+      </article>
+      <article class="agent" data-agent="alih" data-state="idle">
+        <div class="agent-face">🌏</div>
+        <h3>Alih</h3><p class="agent-role">Translator · ID ↔ EN</p>
+        <p class="agent-say">"Bahasa Indonesia or English — I'll carry the feeling across, too."</p>
+        <span class="agent-status">Resting</span>
+      </article>
+      <article class="agent" data-agent="rara" data-state="idle">
+        <div class="agent-face">🦉</div>
+        <h3>Rara</h3><p class="agent-role">Summariser</p>
+        <p class="agent-say">"Long read? I'll give you the gist first, then the good bits."</p>
+        <span class="agent-status">Resting</span>
+      </article>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- STUDIO -->
+    <section class="studio card">
+      <h2>Reading studio</h2>
+      <label class="field-label" for="editor">Your text <small id="editor-note">— a sample letter is loaded to play with; replace it with your own any time</small></label>
+      <textarea id="editor" rows="9" placeholder="Paste the text that's giving you trouble — a letter, a bill, an article, anything…"></textarea>
+      <div class="studio-row">
+        <label class="switch">
+          <input type="checkbox" id="personal-toggle">
+          <span class="track"></span>
+          <span class="switch-label">🔒 Just between us <small>(personal — stays in this browser)</small></span>
+        </label>
+        <div class="comfort">
+          <button type="button" class="mini-btn" data-comfort="focusMode">Focus mode</button>
+          <button type="button" class="mini-btn" data-comfort="largeText">Bigger text</button>
+          <button type="button" class="mini-btn" data-comfort="friendlyFont">Friendly font</button>
+        </div>
+      </div>
+      <label class="field-label" for="ask">Ask Rani</label>
+      <div class="ask-row">
+        <input id="ask" type="text" placeholder="e.g. Please simplify this so a 12-year-old can follow it">
+        <button id="run" class="primary-btn" type="button">Ask my team →</button>
+      </div>
+      <div class="quick-actions">
+        <button type="button" class="mini-btn" data-quick="simplify">✨ Simplify</button>
+        <button type="button" class="mini-btn" data-quick="translate">🌏 Translate</button>
+        <button type="button" class="mini-btn" data-quick="summarise">🦉 Summarise</button>
+        <button type="button" class="mini-btn" id="speak-btn">🔊 Read it aloud</button>
+      </div>
+      <p class="field-label">Try a whole errand, one click:</p>
+      <div class="chips" id="sample-runs"></div>
+      <div id="result" class="result" hidden>
+        <div class="result-head">
+          <span id="result-badge" class="pill pill-ai">From your team</span>
+          <span id="result-who" class="result-who"></span>
+        </div>
+        <div id="result-text" class="result-text"></div>
+        <p id="receipt" class="receipt"></p>
+      </div>
+      <p id="error-box" class="error-box" hidden></p>
+    </section>
+
+    <!-- LEDGER -->
+    <aside class="ledger card" aria-label="Agent activity">
+      <h2>Watch them work</h2>
+      <p class="ledger-sub">Every routing decision, consent question and receipt — in the open. No secrets, no silent calls.</p>
+      <ol id="ledger" class="ledger-list"></ol>
+    </aside>
+  </div>
+
+  <!-- GALLERY -->
+  <section class="gallery card" aria-label="Example transformations">
+    <h2>Fresh from the team ✨</h2>
+    <p class="ledger-sub" id="gallery-note">Real transformations, generated by the team on this page — not screenshots, not scripts pasted in.</p>
+    <div class="gallery-grid" id="gallery"></div>
+  </section>
+
+  <!-- NEIGHBOURS (cross-site composition) -->
+  <section class="neighbours card" aria-label="Neighbours on the agentic web">
+    <h2>Neighbours we can visit 🤝</h2>
+    <p class="ledger-sub">This is the agentic web doing its thing: our agents may load a neighbour's agent
+    network and run it <em>here, in your browser</em> — but only after you approve the consent card.
+    Your key never travels, and your personal text never crosses.</p>
+    <article class="peer-card">
+      <div class="peer-head">
+        <div>
+          <h3>📋 Deadline Desk</h3>
+          <p class="peer-origin">deadline-desk-agent.vercel.app · network “deadline_desk” · by Class-now</p>
+        </div>
+        <span class="pill pill-warm">live peer</span>
+      </div>
+      <p>A board of prize contests and hackathons you can still enter. Ask it what's open —
+      its own agents answer with <strong>live board data</strong>, fetched at the moment you ask.</p>
+      <label class="field-label" for="peer-ask">Ask the neighbour</label>
+      <div class="ask-row">
+        <input id="peer-ask" type="text" value="Which hackathons that allow generative AI close in the next four weeks?">
+        <button id="peer-run" class="primary-btn" type="button">Visit with Rani →</button>
+      </div>
+      <div id="peer-result" class="result" hidden>
+        <div class="result-head">
+          <span class="pill pill-ai">Back from the neighbours</span>
+          <span id="peer-result-who" class="result-who"></span>
+        </div>
+        <div id="peer-result-text" class="result-text"></div>
+        <p id="peer-receipt" class="receipt"></p>
+      </div>
+      <p id="peer-error" class="error-box" hidden></p>
+    </article>
+  </section>
+
+  <!-- TRUST THEATRE (§6 performed live) -->
+  <section class="trust card">
+    <h2>Promises you can test 🧪</h2>
+    <p>Don't take our word for it — the safety rails perform live, right here. Five checks,
+    each timed, all done in well under a minute:</p>
+    <div class="trust-btns">
+      <button type="button" class="primary-btn" id="theatre-run">▶ Run all five safety checks</button>
+      <span id="theatre-summary" class="theatre-summary">Not run yet — press the button and watch.</span>
+    </div>
+    <ol class="theatre-list" id="theatre-list">
+      <li data-check="validate"><span class="check-dot">·</span><div><strong>Our network file is honest</strong><p>Every agent named, every reference resolves, no cycles, privacy policy stated out loud.</p></div><span class="check-meta">waiting</span></li>
+      <li data-check="tamper"><span class="check-dot">·</span><div><strong>A tampered network is turned away</strong><p>We sneak in a duplicate agent — the validator must reject the file before anyone wakes up.</p></div><span class="check-meta">waiting</span></li>
+      <li data-check="cycle"><span class="check-dot">·</span><div><strong>A looping network is turned away</strong><p>Two agents delegating to each other forever must be caught as a composition cycle.</p></div><span class="check-meta">waiting</span></li>
+      <li data-check="budget"><span class="check-dot">·</span><div><strong>A runaway request is stopped kindly</strong><p>Give a run a one-step budget and watch it halt with a polite explanation, not a crash.</p></div><span class="check-meta">waiting</span></li>
+      <li data-check="denied"><span class="check-dot">·</span><div><strong>A refused visit never happens</strong><p>We simulate you pressing “Not now” — the fetch counter must stay at exactly zero.</p></div><span class="check-meta">waiting</span></li>
+    </ol>
+    <p id="trust-output" class="trust-output">Results will appear here, honestly — good or bad.</p>
+  </section>
+
+  <footer class="foot">
+    <p>BacaJelas is an open agentic website (MVP Profile 0.3). Its agent network —
+    <a href="./agent-manifest.json">manifest</a> · <a href="./bacajelas.network.json">network</a> · <a href="./links.json">links</a> —
+    is public, so other friendly sites can call Rani too.
+    Don't believe it? <a href="https://bacajelas-caller.web.app/">Watch a neighbour call us →</a></p>
+    <p>Open source (Apache-2.0): <a href="https://github.com/arizkis/bacajelas-agentic">github.com/arizkis/bacajelas-agentic</a> —
+    including a small validator any agentic site can run against its own network files.</p>
+  </footer>
+</main>
+
+<!-- CONSENT MODAL -->
+<div id="consent-modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="consent-title">
+  <div class="modal-card">
+    <div class="modal-face">🤝</div>
+    <h3 id="consent-title">Rani would like to say hello to a neighbour</h3>
+    <p id="consent-body"></p>
+    <p class="consent-care">Your key and your personal text <strong>never</strong> go along — only the question you approved. Neighbours run here, in your browser, on your terms.</p>
+    <div class="modal-btns">
+      <button type="button" id="consent-no" class="ghost-btn">Not now</button>
+      <button type="button" id="consent-yes" class="primary-btn">Yes, say hello</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (for write actions) -->
+<div id="confirm-modal" class="modal" hidden role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-face">🪟</div>
+    <h3>Before we change anything…</h3>
+    <p id="confirm-body"></p>
+    <div class="modal-btns">
+      <button type="button" id="confirm-no" class="ghost-btn">Keep it as-is</button>
+      <button type="button" id="confirm-yes" class="primary-btn">Yes, go ahead</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS DRAWER -->
+<div id="settings" class="drawer" hidden role="dialog" aria-label="AI model settings">
+  <div class="drawer-card">
+    <h3>⚙ AI model settings</h3>
+    <p class="drawer-sub">BacaJelas runs on the open agentic web: you choose the brain. Bring your own key for any
+    OpenAI-compatible router (Otari is pre-filled as a suggestion), or stay in demo mode with our local mock
+    specialists — every flow works there too, including the visit to Deadline Desk, whose board data is live either way.</p>
+    <label class="field-label" for="set-base">Router base URL</label>
+    <input id="set-base" type="url" placeholder="https://api.otari.ai/api/v1">
+    <label class="field-label" for="set-model">Model</label>
+    <input id="set-model" type="text" placeholder="alibaba/qwen3.8-flash">
+    <label class="field-label" for="set-key">Your API key <small>(stays in this browser, sent only to your router)</small></label>
+    <input id="set-key" type="password" autocomplete="off" placeholder="sk-…">
+    <label class="switch"><input type="checkbox" id="set-mock"><span class="track"></span><span class="switch-label">Demo mode (local mock specialists, no key, no network for reading tasks)</span></label>
+    <div class="modal-btns">
+      <button type="button" id="settings-clear" class="ghost-btn">Forget my key</button>
+      <button type="button" id="settings-save" class="primary-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

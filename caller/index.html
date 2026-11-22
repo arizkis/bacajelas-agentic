@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Neighbour's Porch — watch this site call BacaJelas</title>
+<meta name="description" content="A tiny second-origin demo: this page loads BacaJelas's public agent network and runs its translator here, proving agentic websites can call each other — with consent, and with no key ever crossing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Sora:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">⌂</div>
+    <div>
+      <strong>The Neighbour's Porch</strong>
+      <span>a different website, on purpose</span>
+    </div>
+  </div>
+  <span class="pill pill-warm">origin: bacajelas-caller.web.app</span>
+</header>
+
+<main>
+  <section class="card hero">
+    <h1>This page is <span class="grad">not BacaJelas</span> — and that's the point.</h1>
+    <p>BacaJelas lives at <strong>bacajelas-agentic.web.app</strong>. This porch lives at a
+    <strong>different origin</strong>. On the open agentic web, that's no obstacle: BacaJelas publishes its
+    agent network as public files, so this page can — with your permission — fetch that network,
+    check it for safety, and run its translator <em>right here</em>.</p>
+    <p>No account. No key on this page at all (there is literally nothing here to steal or leak).
+    Two plain file downloads, one safety check, and Alih the translator does his work in your browser.</p>
+    <label class="field-label" for="sentence">An Indonesian sentence to carry across</label>
+    <input id="sentence" type="text" value="Selamat pagi, Bu. Surat dari sekolah sudah saya terima — rapat orang tua murid hari Jumat pukul sembilan, dan saya akan hadir.">
+    <div class="row">
+      <button id="call" class="primary-btn" type="button">Ask BacaJelas's Alih to translate →</button>
+      <a class="ghost-btn" href="https://bacajelas-agentic.web.app/">Visit BacaJelas itself</a>
+    </div>
+    <div id="result" class="result" hidden>
+      <div class="result-text" id="result-text"></div>
+      <p class="receipt" id="receipt"></p>
+    </div>
+    <p id="error-box" class="error-box" hidden></p>
+  </section>
+
+  <section class="card">
+    <h2>Watch the crossing</h2>
+    <p class="ledger-sub">Every step, in the open — the same honesty BacaJelas keeps on its own page.</p>
+    <ol id="ledger" class="ledger-list"></ol>
+  </section>
+
+  <footer class="foot">
+    <p>Built with the same open-source runtime as BacaJelas
+    (<a href="https://github.com/arizkis/bacajelas-agentic">github.com/arizkis/bacajelas-agentic</a>).
+    The network files this page fetches:
+    <a href="https://bacajelas-agentic.web.app/agent-manifest.json">their manifest</a> ·
+    <a href="https://bacajelas-agentic.web.app/bacajelas.network.json">their network</a>.</p>
+  </footer>
+</main>
+
+<div id="consent-modal" class="modal" hidden role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-face">🤝</div>
+    <h3>May this porch visit BacaJelas?</h3>
+    <p id="consent-body"></p>
+    <p class="consent-care">Only two public files get downloaded. This page holds <strong>no API key</strong>,
+    and your sentence is processed here, in your browser — BacaJelas's own servers (there are none; it's static files) never see it.</p>
+    <div class="modal-btns">
+      <button type="button" id="consent-no" class="ghost-btn">Not now</button>
+      <button type="button" id="consent-yes" class="primary-btn">Yes, pay a visit</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

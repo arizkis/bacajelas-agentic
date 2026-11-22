@@ -1,0 +1,94 @@
+{
+ "actions": {
+  "agentTools": [
+   "website_get_editor_text",
+   "website_detect_language",
+   "website_set_reading_preferences",
+   "website_speak_text"
+  ],
+  "module": "./site-actions.js",
+  "version": 1
+ },
+ "agent_mcp": {
+  "available": false,
+  "front_man": "rani",
+  "network": "bacajelas",
+  "protocol": "nsdeploy-agent-mcp/v1",
+  "reason": "Static bundle; grounded capabilities are exposed as registered local site actions instead of a public MCP facade."
+ },
+ "allowed_peers": [
+  "https://deadline-desk-agent.vercel.app"
+ ],
+ "brand": "BacaJelas — Read clearly. Privately.",
+ "deployment": {
+  "browser_mock": true,
+  "direct_byok": true,
+  "direct_mcp_requires_cors": true,
+  "mode": "static",
+  "public_mcp_facade": false,
+  "self_contained_runtime": true
+ },
+ "linking": {
+  "exports": [
+   {
+    "aliases": [
+     "bacajelas",
+     "rani"
+    ],
+    "front_man": "rani",
+    "network": "bacajelas",
+    "url": "bacajelas"
+   }
+  ],
+  "imports": [
+   {
+    "network": "deadline_desk",
+    "front_man": "deadline_desk_assistant",
+    "url": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
+    "manifest": "https://deadline-desk-agent.vercel.app/agent-manifest.json",
+    "purpose": "Ask which prize calls and hackathons are still open — only after the visitor approves on the consent card."
+   }
+  ],
+  "link_updates": {
+   "mode": "browser-local"
+  },
+  "protocol": "nsdeploy-link/v1"
+ },
+ "llm_router": {
+  "base_url": "https://api.otari.ai/api/v1",
+  "byok_router": "https://api.otari.ai/api/v1",
+  "mock": false,
+  "model": "alibaba/qwen3.8-flash",
+  "note": "Inference is bring-your-own-key: visitors may point Settings at any OpenAI-compatible router (Otari is the pre-filled suggestion) and the key stays in their browser, sent only to that router — never to this site or any peer site. With no key configured, the site runs in a clearly-labelled demo mode with local mock specialists, so every flow — including the visit to Deadline Desk, whose board data is live — can be tried offline. (A publisher Otari key was tested on 2026-11-22 and did not authenticate; rather than ship a key wall that fails, the default path is honest demo mode + BYOK.)"
+ },
+ "networks": [
+  {
+   "description": "A friendly reading companion: Rani welcomes you and routes your text to specialist friends — Sari simplifies, Alih translates ID<->EN, Rara summarises. Personal text never leaves your browser.",
+   "front_man": "rani",
+   "hocon": "./bacajelas.network.json",
+   "name": "bacajelas",
+   "sample_queries": [
+    "Please simplify this paragraph so a 12-year-old can follow it.",
+    "Translate this Indonesian letter into friendly, natural English.",
+    "Summarise this long article into five kind bullet points.",
+    "This text is personal — explain it simply, and please keep it just between us."
+   ],
+   "tags": [
+    "agentified-website",
+    "reading",
+    "accessibility",
+    "privacy"
+   ]
+  }
+ ],
+ "peer_policy": {
+  "deny_origins": [],
+  "mode": "ask",
+  "note": "No third-party origin is contacted without a friendly consent card naming the destination and purpose. Private context (sly_data) is deny-by-default: no field is allowed to pass to a peer network."
+ },
+ "theme": {
+  "accent": "#ff7a6b",
+  "primary": "#6d4bd8",
+  "surface": "#fff9f2"
+ }
+}

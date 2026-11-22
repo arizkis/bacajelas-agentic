@@ -1,0 +1,11 @@
+# Secrets — never commit
+.otari-key.txt
+*.key
+.env
+.env.*
+
+# Build / tooling noise
+node_modules/
+.firebase/
+firebase-debug.log
+.DS_Store

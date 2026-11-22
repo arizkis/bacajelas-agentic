@@ -1,0 +1,59 @@
+{
+ "hosting": [
+  {
+   "headers": [
+    {
+     "headers": [
+      {
+       "key": "Access-Control-Allow-Origin",
+       "value": "*"
+      }
+     ],
+     "source": "/agent-manifest.json"
+    },
+    {
+     "headers": [
+      {
+       "key": "Access-Control-Allow-Origin",
+       "value": "*"
+      }
+     ],
+     "source": "/bacajelas.network.json"
+    },
+    {
+     "headers": [
+      {
+       "key": "Access-Control-Allow-Origin",
+       "value": "*"
+      }
+     ],
+     "source": "/links.json"
+    },
+    {
+     "source": "/.well-known/nsdeploy.json",
+     "headers": [
+      {
+       "key": "Access-Control-Allow-Origin",
+       "value": "*"
+      }
+     ]
+    }
+   ],
+   "ignore": [
+    "firebase.json",
+    "**/node_modules/**"
+   ],
+   "public": "site",
+   "site": "bacajelas-agentic"
+  },
+  {
+   "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+   ],
+   "public": "caller",
+   "site": "bacajelas-caller"
+  }
+ ]
+}
